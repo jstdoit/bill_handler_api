@@ -1,0 +1,62 @@
+#bill-ctner{
+  width:500px;
+  padding:10px 5px;
+  margin:10px auto;
+  -moz-box-shadow: 0 0 4px 4px #ccc;
+  -webkit-box-shadow: 0 0 4px 4px #ccc;
+  box-shadow: 0 0 4px 4px #ccc;
+
+}
+
+div.bill{
+  border:1px solid #666;
+  margin:5px;
+  padding:5px;
+  padding-top:15px;
+}
+
+
+span.dt{
+  float:right;
+}
+
+span.summary{
+  font-size:15px;
+  color:black;
+}
+
+li{
+  list-style:none;
+}
+
+li.category{
+  font:14px "Lucida Grande", Helvetica, Arial, sans-serif bold black;
+  border-bottom:2px solid black;
+  margin-top:10px;
+  color:#333;
+}
+
+li.dish{
+  padding:5px 0 5px 10px;
+  border-bottom:1px dotted #eee;
+}
+
+p.price{
+  display:inline-block;
+  margin:0px 5px;
+}
+
+span.dish-detail{
+  margin-right:15px;
+  width:200px;
+  display:inline-block;
+  overflow:hidden;
+}
+span.delay{
+  color:red;
+}
+
+button#confirm_bill_btn{
+  display:inline-block;
+  padding:3px 5px;
+}
