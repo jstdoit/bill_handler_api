@@ -1,4 +1,6 @@
-bill_handler_api
+Project for Billing Client (pad & phone)
 ================
 
-bill handling for client
+1. `mongod -f [config_file_path]`
+2. `node app.js`
+3. open `http://localhost:8081/board/waiter`
