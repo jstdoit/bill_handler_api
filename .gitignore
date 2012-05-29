@@ -8,6 +8,7 @@ lib-cov
 *.gz
 *.apk
 *.zip
+models/index.js
 
 pids
 logs
