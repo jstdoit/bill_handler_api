@@ -19,14 +19,15 @@ app.configure(function() {
 
   app.use(express.methodOverride());
   app.use(express.bodyParser());
-  app.use(express.cookieParser());
-  app.use(express.session({secret:config.session_secret}));
+	// because of not using these things, so comment them.
+  //app.use(express.cookieParser());
+  //app.use(express.session({secret:config.session_secret}));
   app.use(app.router);
   app.use(express.logger({
     stream: logFile
   }));
-  app.use(express.static(__dirname + '/public'));
-  console.log('config happen');
+  //app.use(express.static(__dirname + '/public'));
+  //console.log('config happen');
 });
 
 app.configure('development', function() {
