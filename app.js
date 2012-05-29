@@ -6,7 +6,7 @@ var express = require('express'),
   app = express.createServer(),
   io = require('socket.io').listen(app),
   router = require('./router'),
-  config = require('./config.default').config,
+  config = require('./config').config,
   fs = require('fs');
 
 module.exports = app;
@@ -26,7 +26,7 @@ app.configure(function() {
   app.use(express.logger({
     stream: logFile
   }));
-  //app.use(express.static(__dirname + '/public'));
+  app.use(express.static(__dirname + '/public'));
   //console.log('config happen');
 });
 
