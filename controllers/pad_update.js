@@ -7,7 +7,6 @@ function download_dish_data(req, res, next){
   fs.readFile('/swidy/data/dish.js', function(err, data){
     if (err) next(err);
     res.setHeader('Content-Length', data.length);
-    console.log(data.length);
     res.setHeader('Content-Type', 'text/html;charset=utf-8');
     var dish = data.toString();
     res.write(dish);
