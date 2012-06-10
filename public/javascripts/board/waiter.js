@@ -6,7 +6,7 @@ function render_bill(data, socket){
   }
 
   var user = $.parseJSON(data.user);
-  var now = new Date();
+  var now = new Date(data.datetime);
   var ctner = $('#bill-ctner');
 
   var html = '';

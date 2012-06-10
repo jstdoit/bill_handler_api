@@ -10,6 +10,7 @@ exports = module.exports = function(app, io){
   var pad_update = require('./controllers/pad_update');
   var phone_update = require('./controllers/phone_update');
   var pic_handler = require('./controllers/pic_handler');
+  var apk = require('./controllers/apk');
 
   app.get('/client', index.index);
   app.get('/shop/:shop_id/dish/:id?', dish.get_dish);
@@ -19,6 +20,8 @@ exports = module.exports = function(app, io){
   app.get('/phone_update/branch_data', phone_update.branch_data);
   app.get('/phone_update/get_md5', phone_update.get_md5);
   app.get('/shop/:shop_id/pic/:pic_name/:pic_size?', pic_handler.get_pic);
+
+  app.get('/apk/:action', apk.update_apk);
 
   app.get('/board/waiter', board.waiter);
 };
