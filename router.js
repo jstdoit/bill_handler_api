@@ -15,6 +15,7 @@ exports = module.exports = function(app, io){
   app.get('/client', index.index);
   app.get('/shop/:shop_id/dish/:id?', dish.get_dish);
   app.post('/bill/add_bill', bill.add_bill);
+  app.get('/bill/finished_check', bill.check_finished);
   app.get('/pad_update/menu_data', pad_update.dish_data);
   app.get('/pad_update/get_md5', pad_update.get_md5);
   app.get('/phone_update/branch_data', phone_update.branch_data);

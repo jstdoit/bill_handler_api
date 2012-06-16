@@ -14,7 +14,7 @@ function render_bill(data, socket){
   html += '<span class="summary">' + '总计:' + data.totalCost + '元,';
 
   if(user.flag == 'phone') {
-    html += '联系电话:' + (user.phoneNumber==undefined?user.phone_number:user.phoneNumber) + '</span>';
+    html += '联系电话:' + (user.phoneNumber==undefined?user.phone_number:user.phoneNumber) + ',' + data.attendee_count + '人</span>';
   } else if(user.flag == 'pad') {
     html += '餐桌号:' + user.deskId + ',服务员号:' + user.employeeId + ',客人数' + user.customerCount + '</span>';
   }

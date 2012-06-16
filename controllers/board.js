@@ -23,6 +23,7 @@ function send_unread_bills(client){
           client.emit('bill_added', {'bill_id':bill._id.toString() ,
                            'bill' : bill.bill_data, 
                            'user' : JSON.stringify(customer), 
+                           'attendee_count' : bill.customer_count,
                            'datetime' : new Date(bill.create_at), 
                            'totalCost':bill.total_cost });
         });
