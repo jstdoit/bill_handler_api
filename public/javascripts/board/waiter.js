@@ -1,6 +1,8 @@
 function render_bill(data, socket){
 
   var bill = $.parseJSON(data.bill);
+  var count = data.totalCount;
+  $('p#bill-count').text('当前总共有未读订单' + count  + '份');
   if ($('#' + data.bill_id).length != 0){
     return;
   }
@@ -8,6 +10,7 @@ function render_bill(data, socket){
   var user = $.parseJSON(data.user);
   var now = new Date(data.datetime);
   var ctner = $('#bill-ctner');
+  var is_finished = (data.is_finished == undefined?false:data.is_finished);
 
   var html = '';
   html += '<div id="' + data.bill_id + '" class="bill">';
@@ -43,27 +46,46 @@ function render_bill(data, socket){
       html += '</li>';
     });
   });
-  html += '</ul><hr/><button id="confirm_bill_btn" value="' + data.bill_id  + '">确认该订单</button> </div>';
+  html += '</ul><hr/><button class="confirm_bill_btn" value="' + data.bill_id  + '">关闭</button><button value="' + data.bill_id + '" ' + (is_finished?'disabled':'')+ ' class="finish_bill_button">' + (is_finished?'已结算':'结算') + '</button> </div>';
   
   $(html).appendTo(ctner);
-  //confirm the bill
-  ctner.delegate('button#confirm_bill_btn', 'click', function(){
-    var o = $(this);
-    socket.emit('bill_confirmed', {'bill_id':o.val()});
-    return false;
-  });
 
 }
 $(function(){
   var socket = io.connect(config.domain);
+  var ctner = $('#bill-ctner');
+  //confirm the bill
+  ctner.delegate('button.confirm_bill_btn', 'click', function(){
+    var o = $(this);
+    if(confirm('确定将关闭该订单吗？')) {
+      socket.emit('bill_confirmed', {'bill_id':o.val()});
+    }
+    return false;
+  });
+  //finish the bill
+  ctner.delegate('button.finish_bill_button', 'click', function(){
+    var o = $(this);
+    if(confirm('确定要结算该订单吗？')){
+      socket.emit('bill_finished', {'bill_id':o.val()});
+    }
+    return false;
+  });
+  //bill_confirm_done
   socket.on('bill_confirm_done', function(data){
-    console.log('confirm done' + data.bId);
     var bId = data.bId;
     $('div#' + bId).slideUp('normal', function(){
-      $(this).remove();
+      var o = $(this);
+      o.remove();
     });
   });
+  //bill finished done
+  socket.on('bill_finished_done', function(data){
+    var bId = data.bId;
+    $('div#' + bId + '>button.finish_bill_button').attr('disabled', true).text('已结算');
+  });
+  //bill added event
   socket.on('bill_added', function(data){
+    console.log(data);
     render_bill(data, socket);
   });
 });

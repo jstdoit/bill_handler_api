@@ -1,3 +1,12 @@
+#bill-summary{
+  width:500px;
+  padding:10px 5px;
+  margin:10px auto;
+  -moz-box-shadow: 0 0 4px 4px green;
+  -webkit-box-shadow: 0 0 4px 4px green;
+  box-shadow: 0 0 4px 4px green;
+}
+
 #bill-ctner{
   width:500px;
   padding:10px 5px;

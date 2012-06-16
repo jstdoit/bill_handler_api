@@ -14,12 +14,40 @@ module.exports = exports = function(params){
   return exports;
 }
 
+
+//send bill data to client
+function send_unread_bill(sockets){
+    var proxy = new EventProxy();
+    var noti = function(count, bill, customer){
+      sockets.in('baizhouxiang').emit('bill_added', {'bill_id':bill._id.toString() ,
+                       'bill' : bill.bill_data, 
+                       'user' : JSON.stringify(customer), 
+                       'totalCount' : count,
+                       'attendee_count' : bill.customer_count,
+                       'datetime' : new Date(bill.create_at), 
+                       'totalCost':bill.total_cost });
+    }
+    proxy.assign('count', 'bill', 'customer', noti);
+
+    Bill.count({bill_confirmed : false}, function(err, count){
+      proxy.trigger('count', count);
+    });
+
+    Bill.findOne({bill_confirmed : false}, function(err, bill, bd){
+      if(bill != null){
+        proxy.trigger('bill', bill);
+        Customer.findOne({_id:bill.customer_id}, function(err, customer, bd){
+          proxy.trigger('customer', customer);
+        });
+      }
+    });
+}
+
 //add bill
 function add_bill(req, res, next){
   
   var bill = JSON.parse(req.body.bill);
   var datetime = new Date().toString();
-  console.log(req.body);
 
   if(bill == '') {
     res.json({'ERR':'Bill data should not be empty'});
@@ -59,13 +87,7 @@ function add_bill(req, res, next){
           res.json({'status':'ERR', 'reason':'SAVE_ERR'});
         } else {
           res.json({'status':'OK', 'order_id':confirm_id});
-          io.sockets.in('baizhouxiang').emit('bill_added',{'bill_id':_bill._id.toString() ,
-                                       'bill' : JSON.stringify(bill.category), 
-                                       'attendee_count' : _bill.customer_count,
-                                       'user' : JSON.stringify(bill.user), 
-                                       'datetime' : datetime, 
-                                       'totalCost':bill.totalCost
-                                       });
+          send_unread_bill(io.sockets);
         } 
       });
     });
@@ -86,13 +108,7 @@ function add_bill(req, res, next){
         res.json({'status':'ERR', 'reason':'SAVE_ERR'});
       } else {
         res.json({'OK':'SUCC'});
-        io.sockets.in('baizhouxiang').emit('bill_added',{'bill_id':_bill._id.toString() ,
-                                     'bill' : JSON.stringify(bill.category), 
-                                     'user' : JSON.stringify(bill.user), 
-                                     'datetime' : datetime, 
-                                     'totalCost':bill.totalCost
-                                     });
-      
+        send_unread_bill(io.sockets);
       }
     });
   }
