@@ -1,5 +1,11 @@
 function render_bill(data, socket){
 
+  var reserve_time = new Date(data.attend_time);
+  var is_reserve = (reserve_time.getFullYear() == 1970)?false:true;
+
+  var desk_id = data.desk_id;
+  var waiter_id = data.waiter_id;
+
   var bill = $.parseJSON(data.bill);
   var count = data.totalCount;
   $('p#bill-count').text('当前总共有未读订单' + count  + '份');
@@ -14,15 +20,16 @@ function render_bill(data, socket){
 
   var html = '';
   html += '<div id="' + data.bill_id + '" class="bill">';
-  html += '<span class="summary">' + '总计:' + data.totalCost + '元,';
+  html += '<span class="summary block">' + '总计:' + data.totalCost + '元,';
 
   if(user.flag == 'phone') {
-    html += '联系电话:' + (user.phoneNumber==undefined?user.phone_number:user.phoneNumber) + ',' + data.attendee_count + '人</span>';
+    html += '联系电话:' + (user.phoneNumber==undefined?user.phone_number:user.phoneNumber) + ', ' + data.attendee_count + '人</span>';
   } else if(user.flag == 'pad') {
     html += '餐桌号:' + user.deskId + ',服务员号:' + user.employeeId + ',客人数' + user.customerCount + '</span>';
   }
 
-  html += '<span class="dt">' + '提交日期:' + now.getFullYear() + '-' + (now.getMonth() + 1) + '-' + now.getDate() + ' '+ now.getHours() + ':' + (now.getMinutes()<10?'0'+now.getMinutes():now.getMinutes()) + ':' + (now.getSeconds()<10?'0' + now.getSeconds():now.getSeconds())+ '</span>';
+  html += '<span class="dt block">' + '订单提交日期:' + now.getFullYear() + '-' + (now.getMonth() + 1) + '-' + now.getDate() + ' '+ now.getHours() + ':' + (now.getMinutes()<10?'0'+now.getMinutes():now.getMinutes()) + ':' + (now.getSeconds()<10?'0' + now.getSeconds():now.getSeconds())+ '</span>';
+  html += '<span class="bill-type block">' + '<span class="bill-t">订单类型:' + (is_reserve?'预约(到达时间：' + reserve_time.getFullYear() + '-' + (reserve_time.getMonth() + 1) + '-' + reserve_time.getDate() + ' '+ reserve_time.getHours() + ':' + (reserve_time.getMinutes()<10?'0'+reserve_time.getMinutes():reserve_time.getMinutes()) + ':' + (reserve_time.getSeconds()<10?'0' + reserve_time.getSeconds():reserve_time.getSeconds())+ ')':'在店, </span>桌号: <span class="desk-id">' + desk_id + '</span><span class="bill-t">, 服务员号: ' + waiter_id) + '</span></span>';
   html += '<hr/>';
   html += '<ul class="dish-list">';
   //category foreach
@@ -30,13 +37,15 @@ function render_bill(data, socket){
     html += '<li class="category">' + cat.categoryName + "</li>";
     //dish foreach
     $.each(cat.dishes, function(i, dish){
-      html += '<li class="dish"><span class="dish-detail">' + (i + 1) + '. (编号:' + dish.dishId + ')' + dish.dishName + '</span><span class="dish-detail">';
+      html += '<li class="dish"><span class="dish-detail"><span class="code">' + (i + 1) + '. (编号:' + dish.dishId + ')</span>' + dish.dishName + '</span><span class="dish-detail">';
       if(dish.prices.length == 1) {
-        html += dish.prices[0].pCount + '份';
+        html += '&times;' + dish.prices[0].pCount + '份';
       } else {
         //price foreach
         $.each(dish.prices, function(i, price){
-          html += '<p class="price">' + price.pTag + ':' + price.pCount + '份</p>';
+          if(price.pCount != 0) {
+            html += '<p class="price">' + price.pTag + '&times;' + price.pCount + '份</p>';
+          }
         });
       }
       html += '</span>';
@@ -46,7 +55,10 @@ function render_bill(data, socket){
       html += '</li>';
     });
   });
-  html += '</ul><hr/><button class="confirm_bill_btn" value="' + data.bill_id  + '">关闭</button><button value="' + data.bill_id + '" ' + (is_finished?'disabled':'')+ ' class="finish_bill_button">' + (is_finished?'已结算':'结算') + '</button> </div>';
+  html += '</ul><hr/>' + '<button class="confirm_bill_btn" value="' + data.bill_id  + '">关闭</button>' 
+                       + '<button value="' + data.bill_id + '" ' + (is_finished?'disabled':'')+ ' class="finish_bill_button">' + (is_finished?'已结算':'结算') + '</button> ' 
+                       + '<button class="print_bill">打印该订单</button>'
+  + '</div>';
   
   $(html).appendTo(ctner);
 
@@ -61,6 +73,11 @@ $(function(){
       socket.emit('bill_confirmed', {'bill_id':o.val()});
     }
     return false;
+  });
+  //print bill
+  ctner.delegate('button.print_bill', 'click', function(){
+    var o = $(this);
+    o.parent().printArea();
   });
   //finish the bill
   ctner.delegate('button.finish_bill_button', 'click', function(){

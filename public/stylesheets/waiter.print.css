@@ -1,0 +1,47 @@
+*{
+  padding:0 !important;
+  margin:0 !important;
+  font-size:10pt;
+  font-family:'Verdana', 'Arial', 'Helvetica', sans-serif;
+  color:black !important;
+}
+
+#bill-ctner{
+  width:auto !important;
+}
+
+span.bill-t{
+  display:none;
+}
+
+span.desk-id{
+  font-size:25px;
+}
+
+.dish-detail{
+  width:auto;
+}
+
+li.category{
+  display:none;
+}
+
+span.code{
+  display:none;
+}
+
+button, span.dt, span.summary{
+  display:none;
+}
+
+span.bill-type{
+  display:block;
+}
+
+ul,li{
+  list-style:none;
+}
+
+li{
+  margin:10pt 0;
+}

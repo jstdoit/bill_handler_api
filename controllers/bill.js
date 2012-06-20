@@ -22,7 +22,12 @@ function send_unread_bill(sockets){
       sockets.in('baizhouxiang').emit('bill_added', {'bill_id':bill._id.toString() ,
                        'bill' : bill.bill_data, 
                        'user' : JSON.stringify(customer), 
+                       'avoid_info' : bill.avoid_info,
+                       'order_phone': bill.order_phone,
+                       'attend_time': bill.attend_time,
                        'totalCount' : count,
+                       'waiter_id': bill.employee_id,
+                       'desk_id' : bill.desk_id,
                        'attendee_count' : bill.customer_count,
                        'datetime' : new Date(bill.create_at), 
                        'totalCost':bill.total_cost });
@@ -49,6 +54,7 @@ function add_bill(req, res, next){
   var bill = JSON.parse(req.body.bill);
   var datetime = new Date().toString();
 
+  console.log(req.body);
   if(bill == '') {
     res.json({'ERR':'Bill data should not be empty'});
   } else if(req.method.toLowerCase == 'get') {
@@ -58,11 +64,13 @@ function add_bill(req, res, next){
   var _customer = null;
   var _bill = new Bill();
   if(bill.user.flag == 'phone'){
-
     var customer_count = req.body.customer_count;
     var avoid_info = req.body.avoid_info;
-    var attend_time = req.body.attend_time;
+    var attend_time = new Date(req.body.attend_time).toLocaleString();
     var confirm_id = Math.round(Math.random() * 10000000);
+    var order_phone = req.body.order_phone;
+    var desk_id = req.body.desk_id;
+    var waiter_id = req.body.waiter_id;
 
     Customer.find({'phone_number':bill.user.phoneNumber}, function(err, custs){
       if(err) {
@@ -79,9 +87,14 @@ function add_bill(req, res, next){
       //bill save
       _bill.customer_id = _customer._id;
       _bill.customer_count = customer_count;
+      _bill.attend_time = new Date(req.body.attend_time);
+      _bill.avoid_info = avoid_info;
       _bill.bill_data = JSON.stringify(bill.category);
       _bill.total_cost = parseInt(bill.totalCost);
       _bill.order_confirm_id = confirm_id;
+      _bill.order_phone = order_phone;
+      _bill.employee_id = waiter_id;
+      _bill.desk_id = desk_id;
       _bill.save(function(err){
         if(err) {
           res.json({'status':'ERR', 'reason':'SAVE_ERR'});

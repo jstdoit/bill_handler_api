@@ -20,6 +20,11 @@ function send_unread_bill(client){
     var noti = function(count, bill, customer){
       client.emit('bill_added', {'bill_id':bill._id.toString() ,
                        'bill' : bill.bill_data, 
+                       'avoid_info': bill.avoid_info,
+                       'order_phone': bill.order_phone,
+                       'attend_time': bill.attend_time,
+                       'waiter_id': bill.employee_id,
+                       'desk_id' : bill.desk_id,
                        'is_finished': bill.bill_finished,
                        'user' : JSON.stringify(customer), 
                        'totalCount' : count,

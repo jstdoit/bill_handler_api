@@ -7,6 +7,9 @@
   box-shadow: 0 0 4px 4px green;
 }
 
+span.block{
+  display:block;
+}
 #bill-ctner{
   width:500px;
   padding:10px 5px;
@@ -22,11 +25,6 @@ div.bill{
   margin:5px;
   padding:5px;
   padding-top:15px;
-}
-
-
-span.dt{
-  float:right;
 }
 
 span.summary{
