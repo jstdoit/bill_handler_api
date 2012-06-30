@@ -1,5 +1,5 @@
 function render_bill(data, socket){
-
+  var cls = 'noprice';
   var reserve_time = new Date(data.attend_time);
   var is_reserve = (reserve_time.getFullYear() == 1970)?false:true;
 
@@ -30,32 +30,45 @@ function render_bill(data, socket){
 
   html += '<span class="dt block">' + '订单提交日期:' + now.getFullYear() + '-' + (now.getMonth() + 1) + '-' + now.getDate() + ' '+ now.getHours() + ':' + (now.getMinutes()<10?'0'+now.getMinutes():now.getMinutes()) + ':' + (now.getSeconds()<10?'0' + now.getSeconds():now.getSeconds())+ '</span>';
   html += '<span class="bill-type block">' + '<span class="bill-t">订单类型:' + (is_reserve?'预约(到达时间：' + reserve_time.getFullYear() + '-' + (reserve_time.getMonth() + 1) + '-' + reserve_time.getDate() + ' '+ reserve_time.getHours() + ':' + (reserve_time.getMinutes()<10?'0'+reserve_time.getMinutes():reserve_time.getMinutes()) + ':' + (reserve_time.getSeconds()<10?'0' + reserve_time.getSeconds():reserve_time.getSeconds())+ ')':'在店, </span>桌号: <span class="desk-id">' + desk_id + '</span><span class="bill-t">, 服务员号: ' + waiter_id) + '</span></span>';
+  html += '<span class="block avoid-info">忌口:' + data.avoid_info.split('|').join(', ') + "</span><br/>";
   html += '<hr/>';
-  html += '<ul class="dish-list">';
+  var list_data = '<ul class="dish-list ' + cls + '">';
   //category foreach
   $.each(bill, function(i, cat){
-    html += '<li class="category">' + cat.categoryName + "</li>";
+    list_data += '<li class="category">' + cat.categoryName + "</li>";
     //dish foreach
     $.each(cat.dishes, function(i, dish){
-      html += '<li class="dish"><span class="dish-detail"><span class="code">' + (i + 1) + '. (编号:' + dish.dishId + ')</span>' + dish.dishName + '</span><span class="dish-detail">';
+      list_data += '<li class="dish"><span class="dish-detail"><span class="code">' + (i + 1) + '. (编号:' + dish.dishId + ')</span>' + dish.dishName + '</span><span class="dish-detail">';
       if(dish.prices.length == 1) {
-        html += '&times;' + dish.prices[0].pCount + '份';
+        list_data += '&times;' + dish.prices[0].pCount + ' <span class="' + cls + '">&times;' + dish.prices[0].pPrice + '元</span>';
       } else {
         //price foreach
         $.each(dish.prices, function(i, price){
           if(price.pCount != 0) {
-            html += '<p class="price">' + price.pTag + '&times;' + price.pCount + '份</p>';
+            list_data += '<p class="price">' + price.pTag + '&times;' + price.pCount + ' <span class="' + cls + '">&times;' + price.pPrice + '元</span></p>';
           }
         });
       }
-      html += '</span>';
+      list_data += '</span>';
       if(dish.delay == 'True') {
-        html += '<span class="delay">等叫</span>';
+        list_data += '<span class="delay">等叫</span>';
       }
-      html += '</li>';
+      list_data += '</li>';
     });
   });
-  html += '</ul><hr/>' + '<button class="confirm_bill_btn" value="' + data.bill_id  + '">关闭</button>' 
+  list_data += '</ul>';
+  html += list_data;
+  html += '<p class="total-cost">合计:' + data.totalCost + '元 </p>';
+
+  var i;
+  list_data = list_data.replace(/noprice/gi, 'cls-noprice');
+  for(i=0;i<3;++i){
+    html += '<div class="cls-noprice h-desk-id">桌号: <span class="desk-id">' + desk_id + '</span></div>';
+    html += '<div class="avoid-info cls-noprice">忌口:' + data.avoid_info.split('|').join(', ') + "</div>";
+    html += list_data;
+  }
+
+  html += '<hr/>' + '<button class="confirm_bill_btn" value="' + data.bill_id  + '">关闭</button>' 
                        + '<button value="' + data.bill_id + '" ' + (is_finished?'disabled':'')+ ' class="finish_bill_button">' + (is_finished?'已结算':'结算') + '</button> ' 
                        + '<button class="print_bill">打印该订单</button>'
   + '</div>';
@@ -102,7 +115,7 @@ $(function(){
   });
   //bill added event
   socket.on('bill_added', function(data){
-    console.log(data);
     render_bill(data, socket);
+    console.log(data);
   });
 });

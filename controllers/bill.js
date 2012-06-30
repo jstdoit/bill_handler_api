@@ -131,13 +131,14 @@ function add_bill(req, res, next){
 
 function check_finished(req, res, next) {
   var ids_to_check = req.query.ids;
-  if (ids_to_check == undefined) {
+  if (ids_to_check == undefined || ids_to_check == '') {
     res.json({'status':'ERR', 'reason':'params needed'});
   } else {
     var ids_arr = ids_to_check.split(',');
     Bill.find({'order_confirm_id': {$in : ids_arr}}, function(err, data){
       if (err) next(err);
       var c_r = [];
+      data.reverse();
       data.forEach(function(bill, index, arr){
         if(bill.bill_finished){
           c_r.push(1);

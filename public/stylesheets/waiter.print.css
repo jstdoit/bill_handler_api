@@ -4,6 +4,7 @@
   font-size:10pt;
   font-family:'Verdana', 'Arial', 'Helvetica', sans-serif;
   color:black !important;
+  background:transparent;
 }
 
 #bill-ctner{
@@ -15,7 +16,11 @@ span.bill-t{
 }
 
 span.desk-id{
-  font-size:25px;
+  font-size:20pt !important;
+}
+
+#bill-summary{
+  display:none;
 }
 
 .dish-detail{
@@ -36,12 +41,37 @@ button, span.dt, span.summary{
 
 span.bill-type{
   display:block;
+  border-bottom:1px solid black;
+}
+
+hr{
+  display:none;
 }
 
 ul,li{
   list-style:none;
+  display:block;
+}
+ul{
+  min-height:6cm;
+  page-break-after:avoid;
 }
 
 li{
-  margin:10pt 0;
+  padding:5pt 0;
+}
+li span.dish-detail{
+  font-size:12pt;
+}
+div.h-desk-id{
+  margin-top:3cm !important;
+}
+div.cls-noprice{
+  border-bottom:1px solid black;
+}
+div.cls-noprice, ul.cls-noprice{
+  display:block;
+}
+span.cls-noprice{
+  display:none;
 }
